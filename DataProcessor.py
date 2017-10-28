@@ -24,11 +24,19 @@ class DataProcessor:
         non_punctuated_pos = [(term,pos) for (term,pos) in no_puncutated_pos if pos[0] in string.ascii_letters]
 
         for(term,pos) in non_punctuated_pos:
-            if len(tert) == 1 and term in list('~><?'';:\/|{}[]@6&*-_.'):
+            if len(term) <= 1 and term in list('~><?'';:\/|{}[]@6&*-_.'):
                 non_punctuated_pos.remove((term,pos))
 
-
         #Now we take the terms and put them in lowercase
+        words = [(term.lower(),pos) for (term,pos) in non_punctuated_pos] #iterates through each term and converts it to lowercase
+
+        #Snippet of code to stem the terms
+        stemmer = PorterStemmer() #initialize the stemmer object
+        stemmed_words = [(stemmer.stem(w),pos) for (w,pos) in words]
+        print("\n stemmed words: ", stemmed_words)
+
+
+
 
 
 
