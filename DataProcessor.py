@@ -6,7 +6,6 @@ import math
 import numpy as np #numpy is missing on the windows machine
 class DataProcessor:
 
-    #TEST FUNCTION WITH SAMPLE WORD_LIST BEFORE IMPLEMENTING IN PROJECT!!!
 
     #NlP processing, elminates stopwords and punctuation.
     #Stems tokens etc...
