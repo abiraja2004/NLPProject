@@ -2,7 +2,8 @@
 from nltk import *
 from nltk.corpus import stopwords
 import string
-
+import math
+import numpy as np #numpy is missing on the windows machine
 class DataProcessor:
 
     #TEST FUNCTION WITH SAMPLE WORD_LIST BEFORE IMPLEMENTING IN PROJECT!!!
@@ -52,7 +53,61 @@ class DataProcessor:
 
         return freq_words
 
+
+    #function to calculate the term frequency
+    #will not work without numpy so comment out if numpy module not installed
+    def tf_idf(self, list_doc, doc_freq, term_freq_doc, query):
+
+        nr_docs = len(list_doc)  # Number of documents
+        # extract terms from the query
+        term_freq_query = process(query)  # output is a list not a dictionary
+
+        print('Query terms', term_freq_query)
+        # find terms in both query and document
+        common_terms = [term for (term, freq) in term_freq_query if term in doc_freq]
+
+        # initialize similarity list to 0
+        # this is a dictionary
+        similarity = {i: 0 for i in range(nr_docs)}
+
+        # idf of the query terms
+        if len(common_terms) == 0:
+            print('\n Error = no common terms between query and docs')
+        else:
+            idf_query = [np.log2((1 + nr_docs) / doc_freq.get(t)) for t in common_terms]
+            print('\nIDF Query Terms', idf_query)
+
+            # tf transformation = log2(1+tf(t)) in each document
+
+            for doc in range(nr_docs):
+                tf_q = [f for (t, f) in term_freq_query if t in common_terms]
+                tf_d = []  # for all common terms, extract the frequency of the term in doc, for the documents the term doesn't appear, the frequency is 0
+                for t in common_terms:
+                    for (d, f) in term_freq_doc.get(t):
+                        if d == doc:
+                            tf_d.append(f)
+                        else:
+                            tf_d.append(0)
+
+                # print('doc_id', doc)
+                # print('\ntf_q', tf_q)
+                # print('\ntf_d', tf_d)
+
+                sim_doc = 0;
+                for c in range(len(common_terms)):
+                    tf_idf_d = tf_q[c] * np.log(1 + tf_d[c]) * idf_query[c]
+                    similarity[doc] += tf_idf_d
+        # sort similarity, return the list of original documents in similarity order
+
+        sorted_doc_list = sorted(similarity, key=similarity.get, reverse=True)
+        return similarity, sorted_doc_list
+
+
+    #function to return the inverted index
+
+
     #to be tested with the NLTK dataset before being implemented
+    #this may not work with the reuters dataset
     def process_texts(self,docs): #function that will read from the file or dataset
         print("Processing datasets")
         doc_list = []
@@ -61,6 +116,9 @@ class DataProcessor:
             doc_list.append(file)
 
         return doc_list
+
+
+
 
 
 
