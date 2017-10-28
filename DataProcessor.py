@@ -5,10 +5,11 @@ import string
 
 class DataProcessor:
 
+    #TEST FUNCTION WITH SAMPLE WORD_LIST BEFORE IMPLEMENTING IN PROJECT!!!
 
     #NlP processing, elminates stopwords and punctuation.
     #Stems tokens etc...
-    def processText(self,text):
+    def process(self,text):
         all_tokens = word_tokenize(text)
         all_pos_tags = pos_tag(all_tokens)
 
@@ -33,7 +34,42 @@ class DataProcessor:
         #Snippet of code to stem the terms
         stemmer = PorterStemmer() #initialize the stemmer object
         stemmed_words = [(stemmer.stem(w),pos) for (w,pos) in words]
-        print("\n stemmed words: ", stemmed_words)
+        #print("\n stemmed words: ", stemmed_words) #used for debugging purposes
+
+        #Snippet to lemmatize the words
+        wl = WordNetLemmatizer()
+        lemmatized_words = [(wl.lemmatize(w),pos) for (w,pos) in words]
+        #print("\n lemmatized words: ", lemmatized_words) # used for debugging purposes
+
+        #Snippet to handle stopwords
+        stopWords = stopwords.words('english') #store stopwords in stopWords
+        wl_noStopWords = [(w,pos) for (w,pos) in stemmed_words if w not in stopWords] #if w not in stopwords, append to wl_noStopWords
+
+        # Snippet to sort the words and removes duplicates
+        unique_words = sorted(set(wl_noStopWords))
+
+        freq_words = [(item[0],item[1],wl_noStopWords.count(item)) for item in unique_words]
+
+        return freq_words
+
+    #to be tested with the NLTK dataset before being implemented
+    def process_texts(self,docs): #function that will read from the file or dataset
+        print("Processing datasets")
+        doc_list = []
+        for doc in doc_list:
+            file = open(doc,"r",encoding='utf-8').read()
+            doc_list.append(file)
+
+        return doc_list
+
+
+
+
+
+
+
+
+
 
 
 
