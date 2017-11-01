@@ -9,6 +9,7 @@ class DataProcessor:
 
     #NlP processing, elminates stopwords and punctuation.
     #Stems tokens etc...
+    #FUNCTION WORKS
     def process(self,text):
         all_tokens = word_tokenize(text)
         all_pos_tags = pos_tag(all_tokens)
@@ -16,7 +17,7 @@ class DataProcessor:
         #output used for debugging purposes
         #print('original terms ,', all_pos_tags)
         #terms with punctuation
-        non_punctuated_terms = [term for term in all_tokens if term not in '!.,''?/\|~ ']
+        #non_punctuated_terms = [term for term in all_tokens if term not in '!.,''?/\|~ ']
 
         #strip terms w/POS with length = 1.
         no_puncutated_pos = [(term, pos) for (term, pos) in all_pos_tags if len(pos) > 1]
@@ -56,15 +57,15 @@ class DataProcessor:
     #function to calculate the term frequency
     #will not work without numpy so comment out if numpy module not installed
     def tf_idf(self, list_doc, doc_freq, term_freq_doc, query):
-        print("Generating tf-idf...")
+
         nr_docs = len(list_doc)  # Number of documents
         # extract terms from the query
         term_freq_query = self.process(query) # output is a list not a dictionary
 
         print('Query terms', term_freq_query)
         # find terms in both query and document
-        common_terms = [term for (term, freq) in enumerate(term_freq_query) if term in doc_freq] #the array will be empty
-        # need to fix
+        common_terms = [term for (term, pos, freq) in term_freq_query if term in doc_freq]
+        print("common terms: ", common_terms)
 
         # initialize similarity list to 0
         # this is a dictionary
@@ -80,7 +81,7 @@ class DataProcessor:
             # tf transformation = log2(1+tf(t)) in each document
 
             for doc in range(nr_docs):
-                tf_q = [f for (t, f) in term_freq_query if t in common_terms]
+                tf_q = [f for (t,p,f) in term_freq_query if t in common_terms] #t = term, f = frequency p = part of speech
                 tf_d = []  # for all common terms, extract the frequency of the term in doc, for the documents the term doesn't appear, the frequency is 0
                 for t in common_terms:
                     for (d, f) in term_freq_doc.get(t):
@@ -88,7 +89,7 @@ class DataProcessor:
                             tf_d.append(f)
                         else:
                             tf_d.append(0)
-                #output statements below used for debugging purposes
+
                 # print('doc_id', doc)
                 # print('\ntf_q', tf_q)
                 # print('\ntf_d', tf_d)
@@ -110,18 +111,18 @@ class DataProcessor:
 
         doc_term_frequency = []
         for doc in range(doc_amt):
-            term_frequency = self.process(doc_list[doc])
+            term_frequency = self.process(doc_list[doc]) #tuple consists of (term, part of speech, frequency of the term)
 
             #output below used for debugging purposes
             #print("\n\nnext document to be processed", term_frequency)
-            doc_term_frequency += [(doc,term,freq) for (doc,term,freq) in term_frequency]
+            doc_term_frequency += [(term,doc,frequency) for (term,pos,frequency) in term_frequency] #tuple consists of (term, document id, term frequency)
 
             #used for debugging purposes
             #print("\n All terms in document:" , doc_term_frequency)
 
             #list of terms and frequences
 
-            all_terms = [term for document,term,frequency in doc_term_frequency]
+            all_terms = [term for term,doc,frequency in doc_term_frequency]
             unique_terms = sorted(set(all_terms))
 
             #doc frequency expressed as a dictionary
@@ -129,11 +130,11 @@ class DataProcessor:
 
             term_frequency_document = {} #initialized as an empty dictionary
 
-            for (document,term,frequency) in doc_term_frequency:
+            for (term,doc,frequency) in doc_term_frequency:
                 if term in term_frequency_document:
-                    term_frequency_document[term].append((document,frequency))
+                    term_frequency_document[term].append((doc,frequency))
                 else:
-                    term_frequency_document[term] = [(document,frequency)]
+                    term_frequency_document[term] = [(doc,frequency)]
 
             #return as a tuple
             print("document_frequency: ", document_frequency)
@@ -172,6 +173,7 @@ class DataProcessor:
 
 
     #function that applies bm25 smoothing
+    #FUNCTION UNTESTED
     def bm25(self,list_doc, doc_freq, term_freq_doc, query):  # This uses BM25 smoothing where k = 10
         nr_docs = len(list_doc)
         term_freq_query = self.process(query)

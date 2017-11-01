@@ -19,12 +19,19 @@ def main():
         for line in file:
             file_str = file_str + line
         reuters_texts.append(file_str)
-    print(reuters_texts) # used for debugging purposes
+
+    for text in reuters_texts:
+        print(str(text)+"\n")
+    #print(reuters_texts) # used for debugging purposes
+
     [document_frequency, term_frequency_document] = dp.inverted_index(reuters_texts)
     """returns the document frequency and term frequency document
     ITS A MUST WHEN CALCULATING THE TF-IDF
     """
-    #[similarity,sorted_doc_list] = dp.tf_idf(reuters_texts,document_frequency,term_frequency_document,q)
+    [similarity,sorted_doc_list] = dp.tf_idf(reuters_texts,document_frequency,term_frequency_document,q)
+
+    print("similarity: ", similarity)
+    print("sorted_doc_list: ",sorted_doc_list)
 
 
 
