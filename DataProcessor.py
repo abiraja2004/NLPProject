@@ -49,21 +49,22 @@ class DataProcessor:
         unique_words = sorted(set(wl_noStopWords))
 
         freq_words = [(item[0],item[1],wl_noStopWords.count(item)) for item in unique_words]
-
+        print("freq_words: ", freq_words)#used for debugging purposes
         return freq_words
 
 
     #function to calculate the term frequency
     #will not work without numpy so comment out if numpy module not installed
     def tf_idf(self, list_doc, doc_freq, term_freq_doc, query):
-
+        print("Generating tf-idf...")
         nr_docs = len(list_doc)  # Number of documents
         # extract terms from the query
         term_freq_query = self.process(query) # output is a list not a dictionary
 
         print('Query terms', term_freq_query)
         # find terms in both query and document
-        common_terms = [term for (term, freq) in term_freq_query if term in doc_freq]
+        common_terms = [term for (term, freq) in enumerate(term_freq_query) if term in doc_freq] #the array will be empty
+        # need to fix
 
         # initialize similarity list to 0
         # this is a dictionary
@@ -87,7 +88,7 @@ class DataProcessor:
                             tf_d.append(f)
                         else:
                             tf_d.append(0)
-
+                #output statements below used for debugging purposes
                 # print('doc_id', doc)
                 # print('\ntf_q', tf_q)
                 # print('\ntf_d', tf_d)
@@ -104,15 +105,16 @@ class DataProcessor:
 
     #function to return the inverted index
     def inverted_index(self,doc_list):
+        print("generating inverted index")
         doc_amt = len(doc_list) # holds the length of the doc_list
 
         doc_term_frequency = []
-        for i in range(doc_amt):
-            term_frequency = self.process(doc_list[i])
+        for doc in range(doc_amt):
+            term_frequency = self.process(doc_list[doc])
 
             #output below used for debugging purposes
             #print("\n\nnext document to be processed", term_frequency)
-            doc_term_frequency += [(i,term,freq) for (term,freq) in term_frequency]
+            doc_term_frequency += [(doc,term,freq) for (doc,term,freq) in term_frequency]
 
             #used for debugging purposes
             #print("\n All terms in document:" , doc_term_frequency)
@@ -134,6 +136,9 @@ class DataProcessor:
                     term_frequency_document[term] = [(document,frequency)]
 
             #return as a tuple
+            print("document_frequency: ", document_frequency)
+            print("term_frequency_document: ",term_frequency_document)
+
             return document_frequency, term_frequency_document
 
 
@@ -155,7 +160,7 @@ class DataProcessor:
             print("The document is empty. Unable to calculate average")
 
     #to be tested with the NLTK dataset before being implemented
-    #this may not work with the reuters dataset
+    #not necessary if working with reuters corpus
     def process_texts(self,docs): #function that will read from the file or dataset
         print("Processing datasets")
         doc_list = []
@@ -194,27 +199,19 @@ class DataProcessor:
                             tf_d.append(0)
 
                 for c in range(len(common_terms)):
-                    k = 2
+                    k = 10 #k can be adjusted if necessary (change val in soure code)
                     tf_idf_d = tf_q[c] * (((k + 1) * tf_d[c]) / (tf_d[c] + k)) * idf_query[c]  # k=10
-                    # tf_idf_d = tf_q[c] * np.log(1 + np.log(1+tf_d[c]))*idf_query[c]
                     similarity[doc] += tf_idf_d
         sorted_doc_list = sorted(similarity, key=similarity.get, reverse=True)
-        return similarity, sorted_doc_list
+        print("similarity: ", similarity)#used for debugging purposes
+        print("sorted_doc_list: ", sorted_doc_list)#used for debugging purposes
+        return similarity, sorted_doc_list # returns a tuple
+
+    #implement query likelyhood method with slide query likelyhood
+    def query_likelyhood_method(self,query,doc_list):
+        num_docs = len(doc_list) # holds the number of documents passed in
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    #function that implements rocchios algorithm
+    def rocchioAlgorithm(self): #algorithm has yet to be implemented
+        pass
