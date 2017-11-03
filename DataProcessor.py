@@ -9,6 +9,7 @@ class DataProcessor:
 
     #NlP processing, elminates stopwords and punctuation.
     #Stems tokens etc...
+    #FUNCTION WORKS
     def process(self,text):
         all_tokens = word_tokenize(text)
         all_pos_tags = pos_tag(all_tokens)
@@ -16,7 +17,7 @@ class DataProcessor:
         #output used for debugging purposes
         #print('original terms ,', all_pos_tags)
         #terms with punctuation
-        non_punctuated_terms = [term for term in all_tokens if term not in '!.,''?/\|~ ']
+        #non_punctuated_terms = [term for term in all_tokens if term not in '!.,''?/\|~ ']
 
         #strip terms w/POS with length = 1.
         no_puncutated_pos = [(term, pos) for (term, pos) in all_pos_tags if len(pos) > 1]
@@ -49,7 +50,7 @@ class DataProcessor:
         unique_words = sorted(set(wl_noStopWords))
 
         freq_words = [(item[0],item[1],wl_noStopWords.count(item)) for item in unique_words]
-
+        print("freq_words: ", freq_words)#used for debugging purposes
         return freq_words
 
 
@@ -63,7 +64,8 @@ class DataProcessor:
 
         print('Query terms', term_freq_query)
         # find terms in both query and document
-        common_terms = [term for (term, freq) in term_freq_query if term in doc_freq]
+        common_terms = [term for (term, pos, freq) in term_freq_query if term in doc_freq]
+        print("common terms: ", common_terms)
 
         # initialize similarity list to 0
         # this is a dictionary
@@ -79,7 +81,7 @@ class DataProcessor:
             # tf transformation = log2(1+tf(t)) in each document
 
             for doc in range(nr_docs):
-                tf_q = [f for (t, f) in term_freq_query if t in common_terms]
+                tf_q = [f for (t,p,f) in term_freq_query if t in common_terms] #t = term, f = frequency p = part of speech
                 tf_d = []  # for all common terms, extract the frequency of the term in doc, for the documents the term doesn't appear, the frequency is 0
                 for t in common_terms:
                     for (d, f) in term_freq_doc.get(t):
@@ -104,22 +106,23 @@ class DataProcessor:
 
     #function to return the inverted index
     def inverted_index(self,doc_list):
+        print("generating inverted index")
         doc_amt = len(doc_list) # holds the length of the doc_list
 
         doc_term_frequency = []
-        for i in range(doc_amt):
-            term_frequency = self.process(doc_list[i])
+        for doc in range(doc_amt):
+            term_frequency = self.process(doc_list[doc]) #tuple consists of (term, part of speech, frequency of the term)
 
             #output below used for debugging purposes
             #print("\n\nnext document to be processed", term_frequency)
-            doc_term_frequency += [(i,term,freq) for (term,freq) in term_frequency]
+            doc_term_frequency += [(term,doc,frequency) for (term,pos,frequency) in term_frequency] #tuple consists of (term, document id, term frequency)
 
             #used for debugging purposes
             #print("\n All terms in document:" , doc_term_frequency)
 
             #list of terms and frequences
 
-            all_terms = [term for document,term,frequency in doc_term_frequency]
+            all_terms = [term for term,doc,frequency in doc_term_frequency]
             unique_terms = sorted(set(all_terms))
 
             #doc frequency expressed as a dictionary
@@ -127,13 +130,16 @@ class DataProcessor:
 
             term_frequency_document = {} #initialized as an empty dictionary
 
-            for (document,term,frequency) in doc_term_frequency:
+            for (term,doc,frequency) in doc_term_frequency:
                 if term in term_frequency_document:
-                    term_frequency_document[term].append((document,frequency))
+                    term_frequency_document[term].append((doc,frequency))
                 else:
-                    term_frequency_document[term] = [(document,frequency)]
+                    term_frequency_document[term] = [(doc,frequency)]
 
             #return as a tuple
+            print("document_frequency: ", document_frequency)
+            print("term_frequency_document: ",term_frequency_document)
+
             return document_frequency, term_frequency_document
 
 
@@ -155,7 +161,7 @@ class DataProcessor:
             print("The document is empty. Unable to calculate average")
 
     #to be tested with the NLTK dataset before being implemented
-    #this may not work with the reuters dataset
+    #not necessary if working with reuters corpus
     def process_texts(self,docs): #function that will read from the file or dataset
         print("Processing datasets")
         doc_list = []
@@ -167,6 +173,7 @@ class DataProcessor:
 
 
     #function that applies bm25 smoothing
+    #FUNCTION UNTESTED
     def bm25(self,list_doc, doc_freq, term_freq_doc, query):  # This uses BM25 smoothing where k = 10
         nr_docs = len(list_doc)
         term_freq_query = self.process(query)
@@ -194,27 +201,19 @@ class DataProcessor:
                             tf_d.append(0)
 
                 for c in range(len(common_terms)):
-                    k = 2
+                    k = 10 #k can be adjusted if necessary (change val in soure code)
                     tf_idf_d = tf_q[c] * (((k + 1) * tf_d[c]) / (tf_d[c] + k)) * idf_query[c]  # k=10
-                    # tf_idf_d = tf_q[c] * np.log(1 + np.log(1+tf_d[c]))*idf_query[c]
                     similarity[doc] += tf_idf_d
         sorted_doc_list = sorted(similarity, key=similarity.get, reverse=True)
-        return similarity, sorted_doc_list
+        print("similarity: ", similarity)#used for debugging purposes
+        print("sorted_doc_list: ", sorted_doc_list)#used for debugging purposes
+        return similarity, sorted_doc_list # returns a tuple
+
+    #implement query likelyhood method with slide query likelyhood
+    def query_likelyhood_method(self,query,doc_list):
+        num_docs = len(doc_list) # holds the number of documents passed in
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    #function that implements rocchios algorithm
+    def rocchioAlgorithm(self): #algorithm has yet to be implemented
+        pass
