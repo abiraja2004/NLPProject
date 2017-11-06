@@ -150,6 +150,7 @@ class DataProcessor:
         # pass in a list of documents
 
         lengths = []  # empty list
+        collection = 0 # records the total number of words in the collection including duplicates
         wordCount = 0  # word counter
         docID = 0 #counter for document id
         for document in docs:  # iterate through the list of documents
@@ -159,7 +160,8 @@ class DataProcessor:
             lengths.append(tuple((docID, wordCount)))
             wordCount = 0
             docID+=1
-        return lengths
+
+        return lengths #returns a tuple (docID,length)
 
     #function to return the min max average of the documents
     def minMaxAverage(docTuples):  # takes in a list of tuples
@@ -230,8 +232,14 @@ class DataProcessor:
         return similarity, sorted_doc_list # returns a tuple
 
     #implement query likelyhood method with slide query likelyhood
-    def query_likelyhood_method(self,query,doc_list,doc_lengths):
+    #no need to pass in query as a param
+    def query_likelyhood_method(self,doc_list,doc_lengths,lamda,collection):
+        #query likelyhood w/linear interpolation is defined by (1-lambda)
+        #*(c(w,d)/length of document)+ lambda*(count of distinct words in the collection/total length of the collection, lamda is a number between 1 and 0
+
         num_docs = len(doc_list) # holds the number of documents passed in
+        for d in range(num_docs):#iterate through the entire document list
+            term_frequency_of_doc = self.process(d)
 
 
 
