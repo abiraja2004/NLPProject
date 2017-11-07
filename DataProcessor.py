@@ -146,7 +146,7 @@ class DataProcessor:
         return document_frequency, term_frequency_document
 
     def get_doc_length(self,docs):#helper function to get length of documents
-        # function determining length of the document
+        # function determining length of the document and length of the collection
         # pass in a list of documents
 
         lengths = []  # empty list
@@ -162,7 +162,21 @@ class DataProcessor:
             docID+=1
         for d,l in lengths:
             collection = collection + l
-        return lengths,collection #returns a tuple (docID,length) and collection length
+        return lengths #returns a tuple (docID,length) and collection length
+
+    def get_collection_lengths(self,docs):
+        #output: distint terms in the collection
+        total_distinct_terms = 0
+
+        # output2: total terms including duplicates in the collection
+        total_collection = 0
+        for doc in docs:
+            term_frequency = self.process(doc)
+
+            total_distinct_terms = total_distinct_terms + len(term_frequency)
+            for term,frequency in term_frequency:
+                total_collection = total_collection + frequency
+        return total_distinct_terms,total_collection
 
     #function to return the min max average of the documents
     def minMaxAverage(docTuples):  # takes in a list of tuples
@@ -234,18 +248,25 @@ class DataProcessor:
 
     #implement query likelyhood method with slide query likelyhood
     #no need to pass in query as a param
-    def query_likelyhood_method(self,doc_list,doc_lengths,lamda,collection):
+    def query_likelyhood(self,doc_list,doc_lengths,collection_length,cwc,lamda):
+        #cwc = count of distinct words in the collection. C = count of all words including duplicates in the collection
+
         #query likelyhood w/linear interpolation is defined by (1-lambda)
         #*(c(w,d)/length of document)+ lambda*(count of distinct words in the collection/total length of the collection, lamda is a number between 1 and 0
-        #use len(term_frequency_of_doc) as the count of distinct words in the collection
+        #use len(term_frequency_of_doc) as the count of distinct words in the document
 
-
+        scores = [] #holds a list of tuples
         num_docs = len(doc_list) # holds the number of documents passed in
         for d in range(num_docs):#iterate through the entire document list
-            term_frequency_of_doc = self.process(d)
 
+            term_frequency_of_doc = self.process(doc_list[d])
+            doc_word_cout = len(term_frequency_of_doc)
             #query likely hood score denoted by q_score
-            q_score =
+            q_score = (1-lamda)*(doc_word_cout/doc_lengths[d][1]) + lamda*(cwc/collection_length)
+            scores.append(tuple((d,q_score))) #tuple consisting of
+        return scores
+
+
 
 
 
