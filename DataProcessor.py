@@ -160,8 +160,9 @@ class DataProcessor:
             lengths.append(tuple((docID, wordCount)))
             wordCount = 0
             docID+=1
-
-        return lengths #returns a tuple (docID,length)
+        for d,l in lengths:
+            collection = collection + l
+        return lengths,collection #returns a tuple (docID,length) and collection length
 
     #function to return the min max average of the documents
     def minMaxAverage(docTuples):  # takes in a list of tuples
@@ -236,10 +237,18 @@ class DataProcessor:
     def query_likelyhood_method(self,doc_list,doc_lengths,lamda,collection):
         #query likelyhood w/linear interpolation is defined by (1-lambda)
         #*(c(w,d)/length of document)+ lambda*(count of distinct words in the collection/total length of the collection, lamda is a number between 1 and 0
+        #use len(term_frequency_of_doc) as the count of distinct words in the collection
+
 
         num_docs = len(doc_list) # holds the number of documents passed in
         for d in range(num_docs):#iterate through the entire document list
             term_frequency_of_doc = self.process(d)
+
+            #query likely hood score denoted by q_score
+            q_score =
+
+
+
 
 
 

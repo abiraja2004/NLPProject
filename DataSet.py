@@ -37,8 +37,9 @@ def main():
     # print("document_frequency: ", document_frequency)
     # print("term_frequency_document: ",term_frequency_document)
     [similarity,sorted_doc_list] = dp.bm25(reuters_texts,document_frequency,term_frequency_document,q)
-    document_lengths = dp.get_doc_length(reuters_texts)
+    [document_lengths,collection_length] = dp.get_doc_length(reuters_texts)
 
+    print("collection_length: ",collection_length)
     print("document lengths: " ,document_lengths)
     print("using bm25 smoothing: ", similarity)
     print("sorted_doc_list: ",sorted_doc_list)
