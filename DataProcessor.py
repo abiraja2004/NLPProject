@@ -3,7 +3,7 @@ from nltk import *
 from nltk.corpus import stopwords
 import string
 import math
-import numpy as np #numpy is missing on the windows machine
+import numpy as np 
 class DataProcessor:
 
 
