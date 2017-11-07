@@ -17,6 +17,7 @@ class DataProcessor:
         #output used for debugging purposes
         #print('original terms ,', all_pos_tags)
         #terms with punctuation
+        #REMOVE CODE PERTAINING TO PART-OF-SPEECH
         #non_punctuated_terms = [term for term in all_tokens if term not in '!.,''?/\|~ ']
 
         #strip terms w/POS with length = 1.
