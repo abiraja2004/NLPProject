@@ -148,9 +148,9 @@ class DataProcessor:
 
     def compute_weights(self,term_frequency_doc,list_doc):#helper method to compute the term weights
         #np.log2((1 + nr_docs) / doc_freq.get(t))
-        term_weights = {} #empty dictionary should output {document:[(term,weigth)]}
+        term_weights = {} #empty dictionary should output {term:[(doc,weigth)]}
         for term, doc_frequencies in term_frequency_doc.items():
-            doc_freqs = [] #stores tuples of (doc,term_weight
+            doc_freqs = [] #stores tuples of (doc,term_weight)
             for doc,frequencies in doc_frequencies:
                 weight = np.log2((1+len(list_doc) / frequencies))
                 doc_freqs.append(tuple((doc,weight)))
@@ -289,8 +289,21 @@ class DataProcessor:
 
 
     #function that implements rocchios algorithm
-    def rocchioAlgorithm(self,list_doc): #algorithm has yet to be implemented
-        pass
+    def rocchioAlgorithm(self,list_doc,term_weights,query): #algorithm has yet to be implemented
+        relevant_docs = []#list of relevant docs
+        nonrelevant_docs = [] # list of nonrelevant docs
+        i = 0
+        while len(relevant_docs) < 10:
+            feedback = int(input("enter 1 for relevant or 0 for not relevant for doc " + str(i) + " "))
+            while feedback != 0 and feedback !=1:
+                print("invalid input")
+                feedback = int(input("enter 1 for relevant or 0 for not relevant for doc " + str(i) + " "))
+            if feedback == 1: #indicates a document is relevant
+                relevant_docs.append(list_doc[i])
+            i+=1
+        nonrelevant_docs = [doc for doc in list_doc if doc not in relevant_docs]
+
+
 
 
 
