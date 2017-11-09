@@ -34,8 +34,9 @@ def main():
     """returns the document frequency and term frequency document
     ITS A MUST WHEN CALCULATING THE TF-IDF
     """
-    # print("document_frequency: ", document_frequency)
-    # print("term_frequency_document: ",term_frequency_document)
+    dp.compute_weights(term_frequency_document,reuters_texts)
+
+    print("document_frequency: ", document_frequency)
     [total_collection, total_distinct_terms] = dp.get_collection_lengths(reuters_texts)
     [similarity,sorted_doc_list] = dp.bm25(reuters_texts,document_frequency,term_frequency_document,q)
     document_lengths = dp.get_doc_length(reuters_texts)

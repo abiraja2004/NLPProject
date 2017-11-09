@@ -136,7 +136,7 @@ class DataProcessor:
 
         for (term,doc,frequency) in doc_term_frequency:
             if term in term_frequency_document:
-                term_frequency_document[term].append((doc,frequency))
+                term_frequency_document[term].append((doc,frequency)) #{term: [(doc,frequency)}
             else:
                 term_frequency_document[term] = [(doc,frequency)]
 
@@ -145,6 +145,19 @@ class DataProcessor:
         print("term_frequency_document: ",term_frequency_document)
 
         return document_frequency, term_frequency_document
+
+    def compute_weights(self,term_frequency_doc,list_doc):#helper method to compute the term weights
+        #np.log2((1 + nr_docs) / doc_freq.get(t))
+        term_weights = {} #empty dictionary should output {document:[(term,weigth)]}
+        for term, doc_frequencies in term_frequency_doc.items():
+            doc_freqs = [] #stores tuples of (doc,term_weight
+            for doc,frequencies in doc_frequencies:
+                weight = np.log2((1+len(list_doc) / frequencies))
+                doc_freqs.append(tuple((doc,weight)))
+            term_weights[term] = doc_freqs
+        return term_weights
+
+
 
     def get_doc_length(self,docs):#helper function to get length of documents
         # function determining length of the document and length of the collection
@@ -220,6 +233,7 @@ class DataProcessor:
         print("common terms: ", common_terms)
 
 
+
         similarity = {i: 0 for i in range(nr_docs)}
 
         if len(common_terms) == 0:
@@ -275,5 +289,11 @@ class DataProcessor:
 
 
     #function that implements rocchios algorithm
-    def rocchioAlgorithm(self): #algorithm has yet to be implemented
+    def rocchioAlgorithm(self,list_doc): #algorithm has yet to be implemented
         pass
+
+
+
+
+
+
