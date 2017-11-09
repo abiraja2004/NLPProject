@@ -36,20 +36,24 @@ def main():
     """
     term_weights = dp.compute_weights(term_frequency_document,reuters_texts)
     # print the term weights
-    # for term,weights in term_weights.items():
-    #     print(term," ",weights)
+    for term,weights in term_weights.items():
+        print(term," ",weights)
 
     print("document_frequency: ", document_frequency)
     [total_collection, total_distinct_terms] = dp.get_collection_lengths(reuters_texts)
     [similarity,sorted_doc_list] = dp.bm25(reuters_texts,document_frequency,term_frequency_document,q)
     document_lengths = dp.get_doc_length(reuters_texts)
     query_likelyhood_scores = dp.query_likelyhood(reuters_texts,document_lengths,total_collection,total_distinct_terms,.5)
-    dp.rocchioAlgorithm(reuters_texts,term_weights,q)
+    modded_query_vector = dp.rocchioAlgorithm(reuters_texts,term_weights,q,1,1,1)
+
+
+    #output statements
     print("total_collection: ",total_collection)
     print("document lengths: " ,document_lengths)
     print("using bm25 smoothing: ", similarity)
     print("sorted_doc_list: ",sorted_doc_list)
     print("query_likelyhood_scores: ",query_likelyhood_scores)
+    print("modded_query_vector: ",modded_query_vector)
 
 
 

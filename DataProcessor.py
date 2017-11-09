@@ -289,12 +289,16 @@ class DataProcessor:
 
 
     #function that implements rocchios algorithm
-    def rocchioAlgorithm(self,list_doc,term_weights,query): #algorithm has yet to be implemented
+    def rocchioAlgorithm(self,list_doc,term_weights,query,a,b,g): #algorithm has yet to be implemented
         processed_query = self.process(query)
+        print("\n",processed_query)
         processed_query_list = [term for (term,frequency) in processed_query]
         relevant_docs = []#list of relevant docs
         nonrelevant_docs = [] # list of nonrelevant docs
         query_vector = [] # list that holds 1 for relevant and 0 for not relevant
+        modded_query_vector = [] #modified query vector represented as a list of values
+        cr = 0 # used for total relevant docs
+        cn = 0 # used for total irrelevant docs
         i = 0
         while len(relevant_docs) < 10:
             feedback = int(input("enter 1 for relevant or 0 for not relevant for doc " + str(i) + " "))
@@ -306,17 +310,37 @@ class DataProcessor:
             i+=1
         nonrelevant_docs = [doc for doc in list_doc if doc not in relevant_docs]
 
-
-        #modded_query = a*query_vector[i]+b*cr-g*cn where a = alpha, b = beta, g = game, cr = total relevant document, and cn = tot nonrelevant documents
-        #we don't have to take into consideration alpha beta
-
         for term in processed_query_list:#iterate through the query list
             feedback = int(input("enter 1 for relevant or 0 for not relevant for " + term))#ask the user for feedback on the relevant terms
             while feedback != 1 and feedback != 0:
                 print("invalid input.")
                 feedback = int(input("enter 1 for relevant or 0 for not relevant for " + term))
-                query_vector.append(feedback)
-            print("query_vector: " + query_vector)
+            query_vector.append(feedback)
+        #print("query_vector: ",query_vector)
+
+
+        # modded_query = a*query_vector[i]+b*cr-g*cn where a = alpha, b = beta, g = game, cr = total relevant document, and cn = tot nonrelevant documents
+        # we don't have to take into consideration alpha beta
+        for i in range(len(processed_query_list)): #compute the rochio score
+            if processed_query_list[i] in term_weights:#will iterate through the key value if it exists
+                for(doc,weight) in term_weights[processed_query_list[i]]:
+                    cr = cr + weight
+                    cn = cn + weight
+            cr = cr / len(relevant_docs)
+            cn = cn / len(nonrelevant_docs)
+
+            modded_query = a*query_vector[i]+b*cr-g*cn
+            modded_query_vector.append(tuple((term,modded_query)))
+            cr = 0
+            cn = 0
+        return modded_query_vector
+
+
+
+
+
+
+
 
 
 
