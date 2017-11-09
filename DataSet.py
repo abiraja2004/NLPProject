@@ -35,9 +35,9 @@ def main():
     ITS A MUST WHEN CALCULATING THE TF-IDF
     """
     term_weights = dp.compute_weights(term_frequency_document,reuters_texts)
-    #print the term weights
-    for term,weights in term_weights.items():
-        print(term," ",weights)
+    # print the term weights
+    # for term,weights in term_weights.items():
+    #     print(term," ",weights)
 
     print("document_frequency: ", document_frequency)
     [total_collection, total_distinct_terms] = dp.get_collection_lengths(reuters_texts)
