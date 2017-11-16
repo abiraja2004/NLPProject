@@ -336,8 +336,32 @@ class DataProcessor:
         return modded_query_vector
 
 
-    def precision(self,query):
-        pass
+    def precision(self,query,doclist):
+        #precision = tp/(tp+fp) or # matches / top docs
+        top_docs = []
+        tp = 0 # used to calculate the precision score for query
+        i = 0 #iterator for the doclist
+
+        while len(top_docs) < 10:
+            feedback = int(input("Enter 1 for relevant or 0 for non relevant for doc " + str(i) + " "))
+            while feedback !=1 and feedback != 0:
+                feedback = int(input("Enter 1 for relevant or 0 for non relevant for doc" + str(i) + " "))
+            if feedback == 1:
+                top_docs.append(doclist[i])
+            i+=1
+
+        for document in top_docs:
+            document = document.split(" ")
+            found = False #bool to determine if term matches the query
+            for term in document:
+                if term.lower() == query.lower() and found == False:
+                    tp+=1
+                    found = True #set to true to not increment score for multiple occurences
+        #now we calculate the precision
+        precision = tp/len(top_docs)
+        return precision
+
+
 
 
 

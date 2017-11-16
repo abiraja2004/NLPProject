@@ -45,6 +45,7 @@ def main():
     document_lengths = dp.get_doc_length(reuters_texts)
     query_likelyhood_scores = dp.query_likelyhood(reuters_texts,document_lengths,total_collection,total_distinct_terms,.5)
     modded_query_vector = dp.rocchioAlgorithm(reuters_texts,term_weights,q,1,1,1)
+    precision_score = dp.precision(q,reuters_texts)
 
 
     #output statements
@@ -55,10 +56,7 @@ def main():
     #print("sorted_doc_list: ",sorted_doc_list)
     print("query_likelyhood_scores: ",query_likelyhood_scores)
     print("modded_query_vector taken from Rocchios algorithm: ",modded_query_vector)
-
-
-
-
+    print("precision score from precision function for the query " + q + ": ", precision_score)
 
 main()
 
