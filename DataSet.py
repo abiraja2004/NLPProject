@@ -15,7 +15,7 @@ def main():
 
     reuters_texts = []
     #Working with the first 50 files from the reuters library
-    reuters_data = reuters.fileids()[:50]
+    reuters_data = reuters.fileids()[:60]
     for data in reuters_data:
         file_str = "" #concatinate file to string
         file = reuters.open(data)
@@ -36,8 +36,8 @@ def main():
     """
     term_weights = dp.compute_weights(term_frequency_document,reuters_texts)
     # print the term weights
-    for term,weights in term_weights.items():
-        print(term," ",weights)
+    # for term,weights in term_weights.items():
+    #     print(term," ",weights)
 
     print("document_frequency: ", document_frequency)
     [total_collection, total_distinct_terms] = dp.get_collection_lengths(reuters_texts)
@@ -48,12 +48,13 @@ def main():
 
 
     #output statements
-    print("total_collection: ",total_collection)
-    print("document lengths: " ,document_lengths)
+    #print("total_collection: ",total_collection)
+    #print("document lengths: " ,document_lengths)
+    print("Query: ",q)
     print("using bm25 smoothing: ", similarity)
-    print("sorted_doc_list: ",sorted_doc_list)
+    #print("sorted_doc_list: ",sorted_doc_list)
     print("query_likelyhood_scores: ",query_likelyhood_scores)
-    print("modded_query_vector: ",modded_query_vector)
+    print("modded_query_vector taken from Rocchios algorithm: ",modded_query_vector)
 
 
 

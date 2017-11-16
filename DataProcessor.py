@@ -140,9 +140,9 @@ class DataProcessor:
             else:
                 term_frequency_document[term] = [(doc,frequency)]
 
-        #return as a tuple
-        print("document_frequency: ", document_frequency)
-        print("term_frequency_document: ",term_frequency_document)
+        #return as a tuple. these print statements are for debugging
+        #print("document_frequency: ", document_frequency)
+        #print("term_frequency_document: ",term_frequency_document)
 
         return document_frequency, term_frequency_document
 
@@ -212,7 +212,7 @@ class DataProcessor:
     #to be tested with the NLTK dataset before being implemented
     #not necessary if working with reuters corpus
     def process_texts(self,docs): #function that will read from the file or dataset
-        print("Processing datasets")
+        #print("Processing datasets")
         doc_list = []
         for doc in docs:
             file = open(doc,"r",encoding='utf-8').read()
@@ -227,10 +227,10 @@ class DataProcessor:
         nr_docs = len(list_doc)
         term_freq_query = self.process(query)
 
-        print("Query terms ", term_freq_query)
+        #print("Query terms ", term_freq_query)
 
         common_terms = [term for (term, freq) in term_freq_query if term in doc_freq]
-        print("common terms: ", common_terms)
+        #print("common terms: ", common_terms)
 
 
 
@@ -291,7 +291,7 @@ class DataProcessor:
     #function that implements rocchios algorithm
     def rocchioAlgorithm(self,list_doc,term_weights,query,a,b,g): #algorithm has yet to be implemented
         processed_query = self.process(query)
-        print("\n",processed_query)
+        #print("\n",processed_query)
         processed_query_list = [term for (term,frequency) in processed_query]
         relevant_docs = []#list of relevant docs
         nonrelevant_docs = [] # list of nonrelevant docs
@@ -311,10 +311,10 @@ class DataProcessor:
         nonrelevant_docs = [doc for doc in list_doc if doc not in relevant_docs]
 
         for term in processed_query_list:#iterate through the query list
-            feedback = int(input("enter 1 for relevant or 0 for not relevant for " + term))#ask the user for feedback on the relevant terms
+            feedback = int(input("enter 1 for relevant or 0 for not relevant for " + term + " "))#ask the user for feedback on the relevant terms
             while feedback != 1 and feedback != 0:
                 print("invalid input.")
-                feedback = int(input("enter 1 for relevant or 0 for not relevant for " + term))
+                feedback = int(input("enter 1 for relevant or 0 for not relevant for " + term + " "))
             query_vector.append(feedback)
         #print("query_vector: ",query_vector)
 
@@ -330,10 +330,14 @@ class DataProcessor:
             cn = cn / len(nonrelevant_docs)
 
             modded_query = a*query_vector[i]+b*cr-g*cn
-            modded_query_vector.append(tuple((term,modded_query)))
+            modded_query_vector.append(tuple((term,doc,modded_query)))
             cr = 0
             cn = 0
         return modded_query_vector
+
+
+    def precision(self,query):
+        pass
 
 
 
