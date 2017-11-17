@@ -2,3 +2,4 @@ __pycache__/
 .*pyc
 vector_spaceModded.py
 *.txt
+*.docx
