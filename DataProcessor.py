@@ -289,7 +289,7 @@ class DataProcessor:
 
 
     #function that implements rocchios algorithm
-    def rocchioAlgorithm(self,list_doc,term_weights,query,a,b,g): #algorithm has yet to be implemented
+    def rocchioAlgorithm(self,list_doc,term_weights,query,a,b,g):
         processed_query = self.process(query)
         #print("\n",processed_query)
         processed_query_list = [term for (term,frequency) in processed_query]
@@ -330,13 +330,15 @@ class DataProcessor:
             cn = cn / len(nonrelevant_docs)
 
             modded_query = a*query_vector[i]+b*cr-g*cn
-            modded_query_vector.append(tuple((term,doc,modded_query)))
+            modded_query_vector.append(tuple((term,modded_query)))
             cr = 0
             cn = 0
         return modded_query_vector
 
 
     def precision(self,query,doclist):
+        query = query.lower()
+        query = query.split(" ")
         #precision = tp/(tp+fp) or # matches / top docs
         top_docs = []
         tp = 0 # used to calculate the precision score for query
@@ -353,10 +355,14 @@ class DataProcessor:
         for document in top_docs:
             document = document.split(" ")
             found = False #bool to determine if term matches the query
+            termcount = 0
             for term in document:
-                if term.lower() == query.lower() and found == False:
-                    tp+=1
-                    found = True #set to true to not increment score for multiple occurences
+                if term.lower() in query and found == False: #set to true to not increment score for multiple occurences:
+                    tp+=1 #increments for every unique term matched between the query and the document
+                    termcount+=1
+                    if termcount == len(query):
+                        found = True
+
         #now we calculate the precision
         precision = tp/len(top_docs)
         return precision

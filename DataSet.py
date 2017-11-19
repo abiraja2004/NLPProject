@@ -15,7 +15,7 @@ def main():
 
     reuters_texts = []
     #Working with the first 50 files from the reuters library
-    reuters_data = reuters.fileids()[:60]
+    reuters_data = reuters.fileids()[:200]
     for data in reuters_data:
         file_str = "" #concatinate file to string
         file = reuters.open(data)
